@@ -4,14 +4,16 @@ FROM golang:alpine AS build-env
 COPY . /go/src/github.com/Ullaakut/cameradar
 WORKDIR /go/src/github.com/Ullaakut/cameradar/cmd/cameradar
 
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.13/main' >> `/etc/apk/repositories`
+
 RUN apk update && \
-    apk upgrade && \
     apk add nmap nmap-nselibs nmap-scripts \
-    curl curl-dev \
     gcc \
     libc-dev \
     git \
-    pkgconfig
+    pkgconfig \
+    curl==7.79.1-r3 \
+    curl-dev==7.79.1-r3
 ENV GO111MODULE=on
 RUN go version
 RUN go build -o cameradar
@@ -26,7 +28,8 @@ RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.9/main' >> /etc/apk/repositori
 RUN apk --update add --no-cache nmap \
     nmap-nselibs \
     nmap-scripts \
-    curl-dev==7.64.0-r5
+    curl-dev==7.64.0-r5 \
+    curl==7.64.0-r5
 
 WORKDIR /app/cameradar
 COPY --from=build-env /go/src/github.com/Ullaakut/cameradar/dictionaries/ /app/dictionaries/
